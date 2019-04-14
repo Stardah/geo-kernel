@@ -1,0 +1,8 @@
+{
+    "argv": ["python", "-m",
+             "geokernel", "-f",
+             "{connection_file}"],
+    "display_name": "GEOcmd",
+    "name": "geo",
+    "language": "geo"
+}
