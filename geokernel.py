@@ -1,74 +1,60 @@
 from ipykernel.kernelbase import Kernel
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from websocket import create_connection
 from io import BytesIO
 import urllib 
 import base64
 import requests
 import socket
 
+import asyncio
+import json
+import logging
+import websockets
+
 login = ""
 password = ""
+token = ""
+port = 9090
 
 class Connection():
-    def request_cmd(code):
+
+    def request_ws(code):
         ''' Send code execution request to a server
-        Args:
-            code: commands to be executed.
+                Args:
+                    code: commands to be executed.
 
-        Returns:
-            Server response string
-        ''' 
-        host = "127.0.0.1"
-        port = 9090
+                Returns:
+                    Server response string
+        '''
+        try:
+            ws = create_connection("ws://localhost:9090/")
+            ws.send(code)
+            result = ws.recv()
+            ws.close()
+            if 'token' in code :
+                global token
+                token = result
+            return result
+        except Exception as e:
+            open('log.txt', 'a').write(str(e) + "\n")
+            return "Error"
 
-        open('log.txt','a').write("Prepare data for netty\n")
-        client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        client.connect((host,port))
-        client.send(bytes(code, 'utf-8'))
-        open('log.txt','a').write("Sent comands request\n")
-        response = client.recv(4096)
-        open('log.txt','a').write("Got response from netty"+response.decode('utf-8')+"\n")
-        return response.decode('utf-8')
+async def client(code):
+    async with websockets.connect('ws://localhost:9090') as websocket:
+        await websocket.send(code)
+        response = await websocket.recv()
+        return response
 
-
-class Handler(BaseHTTPRequestHandler):
-    out = None
-    def do_GET(self):
-        global login
-        global password
-        login, password = self.path[1:].split('&')
-        open('log.txt','a').write("Got login password from Jupyter cell\n")
-        if (Connection.request_cmd("login "+login+" "+password) == "Success"):
-            self.send_response(200)
-        else:
-            self.send_response(400)
-        self.send_header('Content-type', 'text')
-        self.send_header("Content-Length", str(len("Oh hi Mark")))
-        self.send_header("Access-Control-Allow-Origin", "*") 
-        self.send_header("Access-Control-Expose-Headers", "Access-Control-Allow-Origin") 
-        self.send_header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept") 
-        self.end_headers()
-        self.wfile.write("Oh hi Mark".encode("UTF-8"))
-
-        
 class GeoKernel(Kernel):
     implementation = 'GEO'
     implementation_version = '1.0'
-    language = 'geo' 
+    language = 'geo'
     language_version = '1.0'
     language_info = {'name': 'geo',
                      'mimetype': 'text/x-geo',  # mimetype for script files in this language
                      'codemirror_mode': 'geo',
                      'extension': '.geo'}
     banner = "GEO Console"
-
-    '''
-    httpd = HTTPServer(('127.0.0.1', 9099), Handler)
-    httpd_active = False
-    if not self.httpd_active:
-            self.httpd.serve_forever()
-            self.httpd_active = True
-    '''
 
     commands = ["create", "show", "delete", "update", "login"]
     subCommands = ["layer", "map"]
@@ -81,9 +67,8 @@ class GeoKernel(Kernel):
         "create layer" : "name:string layer:string",
     }
 
-
     def do_log(self, text):
-        open('log.txt','a').write(text)
+        open('log.txt','a').write(text+"\n")
 
     def do_complete(self, code, cursor_pos):
         self.do_log('do_complete \n') #str(code) + str(cursor_pos)
@@ -102,7 +87,7 @@ class GeoKernel(Kernel):
             'matches' : matches}
 
     def do_inspect(self, code, cursor_pos, detail_level=0):
-        self.do_log("do_inspect \n")
+        self.do_log("do_inspect")
         commands = code[:cursor_pos].split("\n")[-1].strip()
         if len(commands.split()) > 2:
             commands = " ".join(commands.split()[:2])
@@ -118,26 +103,45 @@ class GeoKernel(Kernel):
         return content
 
     def login_request(self):
-        data = "<html><style>/* Bordered form */form{border: 3px solid #f1f1f1;}/* Full-width inputs */input[type=text], input[type=password]{width: 100%; padding: 12px 20px; margin: 8px 0; display: inline-block; border: 1px solid #ccc; box-sizing: border-box;}/* Set a style for all buttons */button{background-color: #4CAF50; color: white; padding: 14px 20px; margin: 8px 0; border: none; cursor: pointer; width: 100%;}/* Add a hover effect for buttons */button:hover{opacity: 0.8;}/* Extra style for the cancel button (red) */.cancelbtn{width: auto; padding: 10px 18px; background-color: #f44336;}/* Center the avatar image inside this container */.imgcontainer{text-align: center; margin: 24px 0 12px 0;}/* Avatar image */img.avatar{width: 40%; border-radius: 50%;}/* Add padding to containers */.container{padding: 16px;}/* The \"Forgot password\" text */span.psw{float: right; padding-top: 16px;}/* Change styles for span and cancel button on extra small screens */@media screen and (max-width: 300px){span.psw{display: block; float: none;}.cancelbtn{width: 100%;}}</style> <div class=\"container\"> <label for=\"uname\"><b>Username</b></label> <input type=\"text\" id=\"loginInput\" placeholder=\"Enter Username\" name=\"uname\" required> <label for=\"psw\"><b>Password</b></label> <input type=\"password\" id=\"passwordInput\" placeholder=\"Enter Password\" name=\"psw\" required> </div><button onclick=\"myFunction()\">Login</button> <p id=\"result\"> hi</p><script type=\"text/javascript\">function myFunction(){var login=document.getElementById(\"loginInput\").value; var password=document.getElementById(\"passwordInput\").value; var http=new XMLHttpRequest(); var params=login+'&'+password; var url='http://127.0.0.1:9099/'+params; http.open('GET', url, true); http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); http.onprogress=function (){document.getElementById(\"result\").innerHTML=\"Checking...\"; console.log('LOADING: ', http.status);}; http.send(); http.onreadystatechange=function(){if (http.status==200) document.getElementById(\"result\").innerHTML=\"Success!\"; else document.getElementById(\"result\").innerHTML=\"Failed!\"; return;}}</script> </html>"
-        self.send_html(data)        
-        self.do_log("Started http server")
-        return ""
+        global port
+        token = Connection.request_ws("token")
+        if token != 'Error':
+            data = """<iframe width="300" height="300" srcdoc="<html><style>/* Full-width inputs */ input[type=text], input[type=password]{width: 100%; padding: 12px 20px; margin: 8px 0; display: inline-block; border: 1px solid #ccc; box-sizing: border-box;}/* Set a style for all buttons */ button{background-color: #4e91fc; color: white; padding: 14px 20px; margin: 8px 0; border: none; cursor: pointer; width: 100%;}/* Add a hover effect for buttons */ button:hover{opacity: 0.8;}</style> <div class='container'> <label for='uname'><b>Username</b></label> <input type='text' id='loginInput' placeholder='Enter Username' name='uname' required> <label for='psw'><b>Password</b></label> <input type='password' id='passwordInput' placeholder='Enter Password' name='psw' required> </div><button class='check'>Login</button> <div class='state'> Result: <span class='value'>?</span> </div><script type='text/javascript'> var url='ws://127.0.0.1:9090/'; var check=document.querySelector('.check'), value=document.querySelector('.value'), websocket=new WebSocket(url); check.onclick=function (event){var login=document.getElementById('loginInput').value; var password=document.getElementById('passwordInput').value; var token='"""+token+"""'; websocket.send('login '+login+' '+password+' '+token);}; websocket.onmessage=function (event){value.textContent=event.data;}; </script> </html>" frameborder="0" allowfullscreen=""></iframe>"""
+            self.send_html(data)
+        else:
+            self.send_html(token)
+
+    def register_request(self):
+        global port
+        data = """<iframe width="300" height="300" srcdoc="<html><style>/* Full-width inputs */ input[type=text], input[type=password]{width: 100%; padding: 12px 20px; margin: 8px 0; display: inline-block; border: 1px solid #ccc; box-sizing: border-box;}/* Set a style for all buttons */ button{background-color: #4e91fc; color: white; padding: 14px 20px; margin: 8px 0; border: none; cursor: pointer; width: 100%;}/* Add a hover effect for buttons */ button:hover{opacity: 0.8;}</style> <div class='container'> <label for='uname'><b>Username</b></label> <input type='text' id='loginInput' placeholder='Enter Username' name='uname' required> <label for='psw'><b>Password</b></label> <input type='password' id='passwordInput' placeholder='Enter Password' name='psw' required> </div><button class='check'>Login</button> <div class='state'> Result: <span class='value'>?</span> </div><script type='text/javascript'> var url='ws://127.0.0.1:9090/'; var check=document.querySelector('.check'), value=document.querySelector('.value'), websocket=new WebSocket(url); check.onclick=function (event){var login=document.getElementById('loginInput').value; var password=document.getElementById('passwordInput').value; websocket.send(login+' '+password);}; websocket.onmessage=function (event){value.textContent=event.data;}; </script> </html>" frameborder="0" allowfullscreen=""></iframe>"""
+        self.send_html(data)
 
     def send_html(self, data):
+        #display_data
         self.send_response(self.iopub_socket,
-            'display_data', 
+            'execute_result',
             {
-            'data': {'text/html' : data},
-            'metadata':{}
+                'execution_count': self.execution_count,
+                'data': {'text/html' : data},
+                'metadata':{}
             })
+
+    def prepare_code(self, code):
+        global token
+        return "-".join([token, code])
 
     def do_execute(self, code, silent,
                    store_history=True,
                    user_expressions=None,
                    allow_stdin=False):
 
-        if not silent:
-            server_response = Connection.request_cmd(code)
+        if 'login' in code:
+            self.login_request()
+        #elif 'register' in code:
+        #    self.register_request()
+        elif not silent:
+            #rcode = self.prepare_code(code)
+            server_response = Connection.request_ws(self.prepare_code(code))
             if "show" in code:
                 # Send data to be displayed in a cell
                 self.send_html(server_response)
