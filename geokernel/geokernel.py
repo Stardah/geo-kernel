@@ -1,7 +1,7 @@
 from ipykernel.kernelbase import Kernel
 import json
-import commands as cmd
-from client import Client, do_log
+from .commands import Commands as cmd
+from .client import Client, do_log
 
 
 class GeoKernel(Kernel):
@@ -96,6 +96,6 @@ class GeoKernel(Kernel):
                 }
 
 
-if __name__ == '__main__':
-    from ipykernel.kernelapp import IPKernelApp
-    IPKernelApp.launch_instance(kernel_class=GeoKernel)
+#if __name__ == '__main__':
+#    from ipykernel.kernelapp import IPKernelApp
+#    IPKernelApp.launch_instance(kernel_class=GeoKernel)
