@@ -6,7 +6,7 @@ Created to be used with CronosDB Server
 
 Installation
 ------------
-To install ``geokernel`` from PyPI:
+To install ``geokernel``:
 1. Download and unpack this repository
 2. Open terminal from unpacked folder
 3. Run the following commands:
