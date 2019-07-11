@@ -1,11 +1,11 @@
-from distutils.core import setup
+import setuptools
 
 #with open('README.rst') as f:
 #    readme = f.read()
 
-setup(
+setuptools.setup(
     name='geokernel',
-    version='0.7',
+    version='0.7.1',
     packages=['geokernel'],
     description='Geo command language kernel for Jupyter',
     long_description='...',
@@ -13,7 +13,7 @@ setup(
     author_email='nikita_terlych@mail.ru',
     url='https://github.com/sterdah/geo-kernel',
     install_requires=[
-        'jupyter_client', 'IPython', 'ipykernel', 'websocket'
+        'jupyter_client', 'IPython', 'ipykernel', 'websocket_client'
     ],
     classifiers=[
         'Programming Language :: Python :: 3',

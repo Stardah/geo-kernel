@@ -1,13 +1,13 @@
 from ipykernel.kernelbase import Kernel
 import json
-from .commands import Commands as cmd
+from .commands import Commands
 from .client import Client, do_log
 
 
 class GeoKernel(Kernel):
     # Kernel info
     implementation = 'GEO'
-    implementation_version = '1.0'
+    implementation_version = '0.1'
     language = 'geo'
     language_version = '1.0'
     language_info = {'name': 'geo',
@@ -19,20 +19,24 @@ class GeoKernel(Kernel):
     def do_complete(self, code, cursor_pos):
         matches = []
         last_line = code[:cursor_pos].split("\n")[-1].strip()
-        if len(last_line.split()) > 1:
-            obj, command = last_line.split()[:2]
-            if obj == "layer" and command in cmd.layerCommands:
-                matches = cmd.layerCommands[command]
-            elif obj == "map" and command in cmd.mapCommands:
-                matches = cmd.mapCommands[command]
-            elif "gdal" in last_line:
-                command = last_line.split()[-1]
-                matches = cmd.gdalCommands[command]
-        elif len(last_line.split()) == 1:
-            if "gdal" in last_line:
-                matches = cmd.gdalCommands[last_line]
+        words = last_line.split()
+        length = len(words)
+        # Process gdal commands
+        if "gdal" in last_line:
+            # User requested command's arguments
+            if length == 1:
+                matches = Commands.getArgs("gdal", words[0])
+            # User requested argument's valid values
             else:
-                matches = cmd.commonComands
+                matches = Commands.getGdalArgValues(words[-1])
+        # Line contains an object and a command
+        # thus, we should return command's arguments
+        elif length > 1:
+            obj, command = last_line.split()[:2]
+            matches = Commands.getArgs(obj, command)
+        # Line contains only an object
+        elif length == 1:
+            matches = Commands.getCommands(words[0])
 
         if code[cursor_pos - 1] != " ":
             matches = [" " + i for i in matches]
@@ -44,11 +48,11 @@ class GeoKernel(Kernel):
 
     def do_inspect(self, code, cursor_pos, detail_level=0):
         commands = code[:cursor_pos].split("\n")[-1].strip()
-        if len(commands.split()) > 2:
-            commands = " ".join(commands.split()[:2])
         if "gdal" in commands:
             commands = commands.split()[0]
-        inspection = cmd.inspections.get(commands)
+        elif len(commands.split()) > 1:
+            commands = " ".join(commands.split()[:2])
+        inspection = Commands.inspections.get(commands)
         if inspection is None:
             inspection = commands
         content = {

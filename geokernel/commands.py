@@ -20,21 +20,12 @@ class Commands:
         "gdalinfo": ["-json", "-mm", "-stats", "-hist", "-nogcp", "-nomd", "-norat",
                      "-noct", "-nofl", "-checksum", "-proj4", "-listmdd",
                      "-mdd", "-wkt_format", "-sd", "-oo"],
-        "-mdd": ["domain", "`all`"],
-        "-wkt_format": ["WKT", "WKT1", "WKT2"],
         "gdal_translate": ["-ot", "-of", "-b", "-mask", "-expand", "-outsize",
                            "-tr", "-r", "-unscale", "-scale", "-exponent",
                            "-srcwin", "-epo", "-eco", "-projwin", "-projwin_srs",
                            "-a_srs", "-a_ullr", "-a_nodata", "-a_scale", "-a_offset",
                            "-nogcp", "-gcp", "-colorinterp", "-mo", "-q", "-co",
                            "-sds", "-stats", "-norat", "-oo"],
-        "-ot": ["Byte", "Int16", "UInt16", "UInt32", "Int32", "Float32", "Float64",
-                "CInt16", "CInt32", "CFloat32", "CFloat64"],
-        "-wt": ["Byte", "Int16", "UInt16", "UInt32", "Int32", "Float32", "Float64",
-                "CInt16", "CInt32", "CFloat32", "CFloat64"],
-        "-expand": ["gray", "rgb", "rgba"],
-        "-r": ["nearest", "bilinear", "cubic", "cubicspline", "lanczos", "average", "mode"],
-        "-colorinterp": ["red", "green", "blue", "alpha", "gray", "undefined"],
         "gdalwarp": ["-s_srs", "-t_srs", "-ct", "-to", "-novshiftgrid", "-order",
                      "-et", "-refine_gcps", "-te", "-te_srs", "-tr", "-ts",
                      "-tap", "-ovr", "-wo", "-ot", "-wt", "-srcnodata",
@@ -42,12 +33,24 @@ class Commands:
                      "-wm", "-multi", "-q", "-cutline", "-cl", "-cwhere",
                      "-csql", "-cblend", "-crop_to_cutline", "-oo", "-of", "-co",
                      "-overwrite", "-nomd", "-cvmd", "-setci", "-doo"],
+    }
+
+    gdalArguments = {
+        "-mdd": ["domain", "`all`"],
+        "-wkt_format": ["WKT", "WKT1", "WKT2"],
+        "-ot": ["Byte", "Int16", "UInt16", "UInt32", "Int32", "Float32", "Float64",
+                "CInt16", "CInt32", "CFloat32", "CFloat64"],
+        "-wt": ["Byte", "Int16", "UInt16", "UInt32", "Int32", "Float32", "Float64",
+                "CInt16", "CInt32", "CFloat32", "CFloat64"],
+        "-expand": ["gray", "rgb", "rgba"],
+        "-r": ["nearest", "bilinear", "cubic", "cubicspline", "lanczos", "average", "mode"],
+        "-colorinterp": ["red", "green", "blue", "alpha", "gray", "undefined"],
         "-order": ["n", "-tps", "-rpc", "-geoloc"],
     }
 
     # list of CRUD commands for both map and layer objects
     commonComands = ["create", "show", "delete", "update", "gdalinfo", "gdal_translate", "gdalwrap"]
-    words = ["layer", "map"]
+    words = ["layer", "map", "gdal"]
     # dict of command's descriptions
     inspections = {
         "map show": "Returns an html document containing the map with all its layers\n  [-map]:string",
@@ -84,3 +87,44 @@ class Commands:
                [-cvmd meta_conflict_value] [-setci] [-oo NAME=VALUE]*\n\
                [-doo NAME=VALUE]* srcfile* dstfile"
     }
+
+    objects = {
+        "map": mapCommands,
+        "layer" : layerCommands,
+        "gdal" : gdalCommands
+    }
+
+    @staticmethod
+    def getCommands(obj):
+        """
+            Finds commands matching for a given object
+        """
+        cmds = Commands.objects.get(obj)
+        if cmds is not None:
+            return cmds.keys()
+
+        return ""
+
+    @staticmethod
+    def getArgs(obj, command):
+        """
+            Finds arguments of a command for a given object
+        """
+        cmds = Commands.objects.get(obj)
+        if cmds is not None:
+            args = cmds.get(command)
+            if args is not None:
+                return args
+
+        return ""
+
+    @staticmethod
+    def getGdalArgValues(argument):
+        """
+            Finds values of an arguments of a gdal command
+        """
+        values = Commands.gdalArguments.get(argument)
+        if values is not None:
+            return values
+
+        return ""
