@@ -83,7 +83,7 @@ class GeoKernel(Kernel):
             self.send_html(Client.register_request())
         elif not silent:
             try:
-                server_response = json.loads(Client.request_ws(Client.prepare_code(code)))
+                server_response = json.loads(Client.request_ws(code))
                 for row in server_response:
                     if row['type'] == 'html':
                         Client.open_map(row['name'], row['data'])
