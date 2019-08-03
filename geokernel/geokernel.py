@@ -16,6 +16,19 @@ class GeoKernel(Kernel):
                      'extension': '.geo'}
     banner = "GEO Console"
 
+    def __init__(self, **kwargs):
+        self.ip = '127.0.0.1'
+        self.port = '8080'
+        from jupyter_client.kernelspec import KernelSpecManager
+        destination = KernelSpecManager()._get_destination_dir('geo', user=True, prefix=None)
+        with open(destination+'\config.txt', 'r') as f:
+            do_log(destination+'\config.txt')
+            self.port = f.readline().split('=')[1].strip()
+            self.ip = f.readline().split('=')[1].strip()
+
+        self.client = Client(self.port, self.ip)
+        super().__init__(**kwargs)
+
     def do_complete(self, code, cursor_pos):
         matches = []
         last_line = code[:cursor_pos].split("\n")[-1].strip()
@@ -78,15 +91,15 @@ class GeoKernel(Kernel):
                    user_expressions=None, allow_stdin=False):
 
         if 'login' in code:
-            self.send_html(Client.login_request())
+            self.send_html(self.client.login_request())
         elif 'register' in code:
-            self.send_html(Client.register_request())
+            self.send_html(self.client.register_request())
         elif not silent:
             try:
-                server_response = json.loads(Client.request_ws(code))
+                server_response = json.loads(self.client.request_ws(code))
                 for row in server_response:
                     if row['type'] == 'html':
-                        Client.open_map(row['name'], row['data'])
+                        self.client.open_map(row['name'], row['data'])
                     else:
                         self.send_html(row['data'])
             except Exception as e:
@@ -98,8 +111,3 @@ class GeoKernel(Kernel):
                 'payload': [],
                 'user_expressions': {},
                 }
-
-
-#if __name__ == '__main__':
-#    from ipykernel.kernelapp import IPKernelApp
-#    IPKernelApp.launch_instance(kernel_class=GeoKernel)
