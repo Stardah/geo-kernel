@@ -22,6 +22,16 @@ def install_my_kernel_spec(user=True, prefix=None):
         print('Installing IPython kernel spec')
         KernelSpecManager().install_kernel_spec(td, 'geo', user=user, replace=True, prefix=prefix)
 
+def setup_config(user = False, prefix = None, port = 9090, ip = '127.0.0.1'):
+    destination = KernelSpecManager()._get_destination_dir('geo', user=user, prefix=prefix)
+    print(destination)
+    print(os.path.isdir(destination))
+    if os.path.isdir(destination):
+        print(destination+'\config.txt')
+        with open(destination+'\config.txt', 'w') as f:
+            f.write('port='+str(port)+'\n')
+            f.write('ip='+ip+'\n')
+
 def _is_root():
     try:
         return os.geteuid() == 0
@@ -32,6 +42,10 @@ def main(argv=None):
     parser = argparse.ArgumentParser(
         description='Install KernelSpec for Geo Kernel'
     )
+
+    parser.add_argument('--port', default=9090)
+    parser.add_argument('--ip', default='127.0.0.1')
+
     prefix_locations = parser.add_mutually_exclusive_group()
 
     prefix_locations.add_argument(
@@ -55,6 +69,8 @@ def main(argv=None):
 
     user = False
     prefix = None
+    port = args.port
+    ip = args.ip
     if args.sys_prefix:
         prefix = sys.prefix
     elif args.prefix:
@@ -63,6 +79,7 @@ def main(argv=None):
         user = True
 
     install_my_kernel_spec(user=user, prefix=prefix)
+    setup_config(user=user, prefix=prefix, port = port, ip = ip)
 
 if __name__ == '__main__':
     main()

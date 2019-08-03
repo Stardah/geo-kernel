@@ -5,7 +5,7 @@ import setuptools
 
 setuptools.setup(
     name='geokernel',
-    version='0.5.1',
+    version='0.5.3.5',
     packages=['geokernel'],
     description='Geo command language kernel for Jupyter',
     long_description='...',
