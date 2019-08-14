@@ -1,0 +1,250 @@
+{
+  "user": {
+    "login": []
+  },
+  "map": {
+    "description": "An object which represents a map",
+    "commands": {
+      "create": {
+        "description": "Creates new map object",
+        "args": {
+          "-map": {
+            "description": "Name of a map",
+            "type": "string"
+          },
+          "-x": {
+            "description": "X coordinate of a map's default view",
+            "type": "double"
+          },
+          "-y": {
+            "description": "Y coordinate of a map's default view",
+            "type": "double"
+          },
+          "-zoom": {
+            "description": "Zoom of a map view",
+            "type": "integer"
+          }
+        }
+      },
+      "show": {
+        "description": "Opens a map in a new browser page",
+        "args": {
+          "-map": {
+            "description": "Name of a map",
+            "type": "string"
+          }
+        }
+      },
+      "delete": {
+        "description": "Removes a map",
+        "args": {
+          "-map": {
+            "description": "Name of a map",
+            "type": "string"
+          }
+        }
+      },
+      "update": {
+        "description": "Updates parameters of an existing map",
+        "args": {
+          "-map": {
+            "description": "Name of a map",
+            "type": "string"
+          },
+          "-name": {
+            "description": "New name of the map",
+            "type": "string"
+          },
+          "-x": {
+            "description": "New X coordinate of a map's default view",
+            "type": "double"
+          },
+          "-y": {
+            "description": "New Y coordinate of a map's default view",
+            "type": "double"
+          },
+          "-zoom": {
+            "description": "New zoom value of a map view",
+            "type": "integer"
+          }
+        }
+      }
+    }
+  },
+  "layer": {
+    "description": "An object which represents a layer of a map",
+    "commands": {
+      "create": {
+        "description": "Creates new layer",
+        "args": {
+          "-map": {
+            "description": "Name of a map which will hold this layer",
+            "type": "string"
+          },
+          "-layer": {
+            "description": "Name of this new layer",
+            "type": "string"
+          },
+          "-link": {
+            "description": "Link with layer's data",
+            "type": "string"
+          }
+        }
+      },
+      "show": {
+        "description": "Shows parameters of a layer",
+        "args": {
+          "-map": {
+            "description": "Name of a map to which the layer is attached",
+            "type": "string"
+          },
+          "-layer": {
+            "description": "Name of the layer",
+            "type": "string"
+          }
+        }
+      },
+      "delete": {
+        "description": "Removes a layer",
+        "args": {
+          "-map": {
+            "description": "Name of a map to which the layer is attached",
+            "type": "string"
+          },
+          "-layer": {
+            "description": "Name of the layer",
+            "type": "string"
+          }
+        }
+      },
+      "update": {
+        "description": "Updates attributes of a layer",
+        "args": {
+          "-map": {
+            "description": "Name of a map to which the layer is attached",
+            "type": "string"
+          },
+          "-layer": {
+            "description": "Name of the layer",
+            "type": "string"
+          },
+          "-name": {
+            "description": "New name of the layer",
+            "type": "string"
+          },
+          "-link": {
+            "description": "New link of the layer",
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "gdal": {
+        "description": "",
+        "commands": {
+          "gdalinfo": {
+            "description": "",
+            "args": [
+              "-json",
+              "-mm",
+              "-stats",
+              "-hist",
+              "-nogcp",
+              "-nomd",
+              "-norat",
+              "-noct",
+              "-nofl",
+              "-checksum",
+              "-proj4",
+              "-listmdd",
+              "-mdd",
+              "-wkt_format",
+              "-sd",
+              "-oo"
+            ]
+          },
+          "gdal_translate": {
+            "description": "",
+            "args": [
+              "-ot",
+              "-of",
+              "-b",
+              "-mask",
+              "-expand",
+              "-outsize",
+              "-tr",
+              "-r",
+              "-unscale",
+              "-scale",
+              "-exponent",
+              "-srcwin",
+              "-epo",
+              "-eco",
+              "-projwin",
+              "-projwin_srs",
+              "-a_srs",
+              "-a_ullr",
+              "-a_nodata",
+              "-a_scale",
+              "-a_offset",
+              "-nogcp",
+              "-gcp",
+              "-colorinterp",
+              "-mo",
+              "-q",
+              "-co",
+              "-sds",
+              "-stats",
+              "-norat",
+              "-oo"
+            ]
+          },
+          "gdalwarp": {
+            "description": "",
+            "args": [
+              "-s_srs",
+              "-t_srs",
+              "-ct",
+              "-to",
+              "-novshiftgrid",
+              "-order",
+              "-et",
+              "-refine_gcps",
+              "-te",
+              "-te_srs",
+              "-tr",
+              "-ts",
+              "-tap",
+              "-ovr",
+              "-wo",
+              "-ot",
+              "-wt",
+              "-srcnodata",
+              "-dstnodata",
+              "-srcalpha",
+              "-nosrcalpha",
+              "-dstalpha",
+              "-r",
+              "-wm",
+              "-multi",
+              "-q",
+              "-cutline",
+              "-cl",
+              "-cwhere",
+              "-csql",
+              "-cblend",
+              "-crop_to_cutline",
+              "-oo",
+              "-of",
+              "-co",
+              "-overwrite",
+              "-nomd",
+              "-cvmd",
+              "-setci",
+              "-doo"
+            ]
+          }
+        }
+  }
+}

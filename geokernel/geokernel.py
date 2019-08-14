@@ -1,5 +1,9 @@
+import re
+
 from ipykernel.kernelbase import Kernel
 import json
+
+from .completer import Completer
 from .commands import Commands
 from .client import Client, do_log
 
@@ -27,40 +31,16 @@ class GeoKernel(Kernel):
             self.ip = f.readline().split('=')[1].strip()
 
         self.client = Client(self.port, self.ip)
+        self.completer = Completer()
         super().__init__(**kwargs)
 
     def do_complete(self, code, cursor_pos):
-        matches = []
-        last_line = code[:cursor_pos].split("\n")[-1].strip()
-        words = last_line.split()
-        length = len(words)
-        # Process gdal commands
-        if "gdal" in last_line:
-            # User requested command's arguments
-            if length == 1:
-                matches = Commands.getArgs("gdal", words[0])
-            # User requested argument's valid values
-            else:
-                matches = Commands.getGdalArgValues(words[-1])
-        # Line contains an object and a command
-        # thus, we should return command's arguments
-        elif length > 1:
-            obj, command = last_line.split()[:2]
-            matches = Commands.getArgs(obj, command)
-        # Line contains only an object
-        elif length == 1:
-            matches = Commands.getCommands(words[0])
-
-        if code[cursor_pos - 1] != " ":
-            matches = [" " + i for i in matches]
-        return {
-            'status': 'ok',
-            'cursor_start': cursor_pos,
-            'cursor_end': cursor_pos,
-            'matches': matches}
+        return self.completer.complete(code, cursor_pos)
 
     def do_inspect(self, code, cursor_pos, detail_level=0):
+        # Get the first word before the cursor
         commands = code[:cursor_pos].split("\n")[-1].strip()
+
         if "gdal" in commands:
             commands = commands.split()[0]
         elif len(commands.split()) > 1:
