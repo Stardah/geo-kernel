@@ -48,7 +48,7 @@ class Completer:
         if match is not None:
             result = self.complete_values(match)
             if result:
-                return self.complete_values(match)
+                return result
 
         # If user looks for a command's arguments
         # we check the "Object command" match
@@ -70,7 +70,6 @@ class Completer:
         # and then N words of arguments and it's values
         obj = match.group(1)
         command = match.group(2)
-        aaaaaa = match.group(3)
         try:
             # Find last argument without keeping list of matches
             for last_arg in re.finditer(r"(-+\w+)", match.group(3)):

@@ -3,6 +3,7 @@ import re
 from ipykernel.kernelbase import Kernel
 import json
 
+from .inspector import Inspector
 from .completer import Completer
 from .commands import Commands
 from .client import Client, do_log
@@ -31,30 +32,17 @@ class GeoKernel(Kernel):
             self.ip = f.readline().split('=')[1].strip()
 
         self.client = Client(self.port, self.ip)
-        self.completer = Completer()
+        f = open("cmd.json", 'r').read()
+        commands = json.loads(f)
+        self.completer = Completer(commands)
+        self.inspector = Inspector(commands)
         super().__init__(**kwargs)
 
     def do_complete(self, code, cursor_pos):
         return self.completer.complete(code, cursor_pos)
 
     def do_inspect(self, code, cursor_pos, detail_level=0):
-        # Get the first word before the cursor
-        commands = code[:cursor_pos].split("\n")[-1].strip()
-
-        if "gdal" in commands:
-            commands = commands.split()[0]
-        elif len(commands.split()) > 1:
-            commands = " ".join(commands.split()[:2])
-        inspection = Commands.inspections.get(commands)
-        if inspection is None:
-            inspection = commands
-        content = {
-            'status': 'ok',
-            'found': True,
-            'data': {'text/plain': inspection},
-            'metadata': {}}
-
-        return content
+        return self.inspector.inspect(code, cursor_pos)
 
     def send_html(self, data):
         """ Send message with html data to the frontend via iopub socket
