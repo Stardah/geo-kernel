@@ -141,110 +141,651 @@
     }
   },
   "gdal": {
-        "description": "",
-        "commands": {
-          "gdalinfo": {
-            "description": "",
-            "args": [
-              "-json",
-              "-mm",
-              "-stats",
-              "-hist",
-              "-nogcp",
-              "-nomd",
-              "-norat",
-              "-noct",
-              "-nofl",
-              "-checksum",
-              "-proj4",
-              "-listmdd",
-              "-mdd",
-              "-wkt_format",
-              "-sd",
-              "-oo"
+    "description": "",
+    "commands": {
+      "gdalinfo": {
+        "description": "Lists various information about a GDAL supported raster dataset.",
+        "args": {
+          "-json": {
+            "description": "Display the output in json format.",
+            "type": "Tag"
+          },
+          "-mm": {
+            "description": "Force computation of the actual min/max values for each band in the dataset.",
+            "type": ""
+          },
+          "-stats": {
+            "description": "Read and display image statistics.\n Force computation if no statistics are stored in an image.",
+            "type": ""
+          },
+          "-approx_stats": {
+            "description": "Read and display image statistics. Force computation if no statistics are stored in an image. However, they may be computed based on overviews or a subset of all tiles. Useful if you are in a hurry and don’t want precise stats.",
+            "type": ""
+          },
+          "-hist": {
+            "description": "Report histogram information for all bands.",
+            "type": ""
+          },
+          "-nogcp": {
+            "description": "Suppress ground control points list printing. It may be useful for datasets with huge amount of GCPs, such as L1B AVHRR or HDF4 MODIS which contain thousands of them.",
+            "type": ""
+          },
+          "-nomd": {
+            "description": "Suppress metadata printing. Some datasets may contain a lot of metadata strings.\n\n-norat",
+            "type": ""
+          },
+          "-norat": {
+            "description": "Suppress printing of raster attribute table.",
+            "type": ""
+          },
+          "-noct": {
+            "description": "Suppress printing of color table.",
+            "type": ""
+          },
+          "-checksum": {
+            "description": "Force computation of the checksum for each band in the dataset.",
+            "type": ""
+          },
+          "-listmdd": {
+            "description": "List all metadata domains available for the dataset.",
+            "type": ""
+          },
+          "-mdd": {
+            "description": "adds metadata using:\n\ndomain Report metadata for the specified domain.\n\nall Report metadata for all domains.",
+            "type": "",
+            "values": [
+              "<domain>",
+              "all"
             ]
           },
-          "gdal_translate": {
-            "description": "",
-            "args": [
-              "-ot",
-              "-of",
-              "-b",
-              "-mask",
-              "-expand",
-              "-outsize",
-              "-tr",
-              "-r",
-              "-unscale",
-              "-scale",
-              "-exponent",
-              "-srcwin",
-              "-epo",
-              "-eco",
-              "-projwin",
-              "-projwin_srs",
-              "-a_srs",
-              "-a_ullr",
-              "-a_nodata",
-              "-a_scale",
-              "-a_offset",
-              "-nogcp",
-              "-gcp",
-              "-colorinterp",
-              "-mo",
-              "-q",
-              "-co",
-              "-sds",
-              "-stats",
-              "-norat",
-              "-oo"
+          "-nofl": {
+            "description": "Only display the first file of the file list.",
+            "type": ""
+          },
+          "-wkt_format": {
+            "description": "WKT format used to display the SRS. Currently the supported values are:\n\nWKT1\n\nWKT2 (latest WKT version, currently WKT2_2018)\n\nWKT2_2015\n\nWKT2_2018",
+            "type": "",
+            "values": [
+              "WKT1",
+              "WKT2",
+              "WKT2_2015",
+              "WKT2_2018"
             ]
           },
-          "gdalwarp": {
-            "description": "",
-            "args": [
-              "-s_srs",
-              "-t_srs",
-              "-ct",
-              "-to",
-              "-novshiftgrid",
-              "-order",
-              "-et",
-              "-refine_gcps",
-              "-te",
-              "-te_srs",
-              "-tr",
-              "-ts",
-              "-tap",
-              "-ovr",
-              "-wo",
-              "-ot",
-              "-wt",
-              "-srcnodata",
-              "-dstnodata",
-              "-srcalpha",
-              "-nosrcalpha",
-              "-dstalpha",
-              "-r",
-              "-wm",
-              "-multi",
-              "-q",
-              "-cutline",
-              "-cl",
-              "-cwhere",
-              "-csql",
-              "-cblend",
-              "-crop_to_cutline",
-              "-oo",
-              "-of",
-              "-co",
-              "-overwrite",
-              "-nomd",
-              "-cvmd",
-              "-setci",
-              "-doo"
+          "-sd": {
+            "description": "If the input dataset contains several subdatasets read and display a subdataset with specified n number (starting from 1). This is an alternative of giving the full subdataset name.",
+            "type": "",
+            "values": [
+              "<n>"
+            ]
+          },
+          "-proj4": {
+            "description": "Report a PROJ.4 string corresponding to the file’s coordinate system.",
+            "type": ""
+          },
+          "-oo": {
+            "description": "Dataset open option (format specific).",
+            "type": "",
+            "values": [
+              "<NAME=VALUE>"
             ]
           }
         }
+      },
+      "gdal_translate": {
+        "description": "Can be used to convert raster data between different formats, potentially performing some operations like subsettings, resampling, and rescaling pixels in the process",
+        "args": {
+          "<src_dataset>": {
+            "description": "The source dataset name. It can be either file name, URL of data source or subdataset name for multi-dataset files.",
+            "type": ""
+          },
+          "<dst_dataset>": {
+            "description": "The destination file name.",
+            "type": ""
+          },
+          "-ot": {
+            "description": "Force the output image bands to have a specific type. Use type names (i.e. Byte, Int16,…)",
+            "type": "",
+            "values": [
+              "Byte",
+              "Int16",
+              "UInt16",
+              "UInt32",
+              "Int32",
+              "Float32",
+              "Float64",
+              "CInt16",
+              "CInt32",
+              "CFloat32",
+              "CFloat64"
+            ]
+          },
+          "-strict": {
+            "description": "Don’t be forgiving of mismatches and lost data when translating to the output format.",
+            "type": ""
+          },
+          "-of": {
+            "description": "Select the output format. Starting with GDAL 2.3, if not specified, the format is guessed from the extension (previously was GTiff). Use the short format name.",
+            "type": "",
+            "values": [
+              "<format>"
+            ]
+          },
+          "-b": {
+            "description": "Select an input band band for output. Bands are numbered from 1. Multiple -b switches may be used to select a set of input bands to write to the output file, or to reorder bands. band can also be set to “mask,1” (or just “mask”) to mean the mask band of the first band of the input dataset.",
+            "type": "",
+            "values": [
+              "<band>"
+            ]
+          },
+          "-mask": {
+            "description": "Select an input band band to create output dataset mask band. Bands are numbered from 1. band can be set to “none” to avoid copying the global mask of the input dataset if it exists. Otherwise it is copied by default (“auto”), unless the mask is an alpha channel, or if it is explicitly used to be a regular band of the output dataset (“-b mask”). band can also be set to “mask,1” (or just “mask”) to mean the mask band of the 1st band of the input dataset.",
+            "type": "",
+            "values": [
+              "<band>"
+            ]
+          },
+          "-expand": {
+            "description": "To expose a dataset with 1 band with a color table as a dataset with 3 (RGB) or 4 (RGBA) bands. Useful for output drivers such as JPEG, JPEG2000, MrSID, ECW that don’t support color indexed datasets. The ‘gray’ value enables to expand a dataset with a color table that only contains gray levels to a gray indexed dataset.",
+            "type": "",
+            "values": [
+              "gray",
+              "rgb",
+              "rgba"
+            ]
+          },
+          "-outsize": {
+            "description": "Set the size of the output file. Outsize is in pixels and lines unless ‘%’ is attached in which case it is as a fraction of the input image size. If one of the 2 values is set to 0, its value will be determined from the other one, while maintaining the aspect ratio of the source dataset.",
+            "type": "",
+            "values": [
+              "<xsize>[%]",
+              "0 <ysize>[%]",
+              "0"
+            ]
+          },
+          "-tr": {
+            "description": "Set target resolution. The values must be expressed in georeferenced units. Both must be positive values. This is mutually exclusive with -outsize and -a_ullr.",
+            "type": "",
+            "values": [
+              "<xres>",
+              "<yres>"
+            ]
+          },
+          "-r": {
+            "description": "Select a resampling algorithm.",
+            "type": "",
+            "values": [
+              "nearest",
+              "bilinear",
+              "cubic",
+              "cubicspline",
+              "lanczos",
+              "average",
+              "mode"
+            ]
+          },
+          "-scale": {
+            "description": "Rescale the input pixels values from the range src_min to src_max to the range dst_min to dst_max. If omitted the output range is 0 to 255. If omitted the input range is automatically computed from the source data. -scale can be repeated several times (if specified only once, it also applies to all bands of the output dataset), so as to specify per band parameters. It is also possible to use the “-scale_bn” syntax where bn is a band number (e.g. “-scale_2” for the 2nd band of the output dataset) to specify the parameters of one or several specific bands.",
+            "type": "",
+            "values": [
+              "[src_min src_max [dst_min dst_max]]"
+            ]
+          },
+          "-exponent": {
+            "description": "To apply non-linear scaling with a power function. exp_val is the exponent of the power function (must be positive). This option must be used with the -scale option. If specified only once, -exponent applies to all bands of the output image. It can be repeated several times so as to specify per band parameters. It is also possible to use the “-exponent_bn” syntax where bn is a band number (e.g. “-exponent_2” for the 2nd band of the output dataset) to specify the parameters of one or several specific bands.",
+            "type": "",
+            "values": [
+              "<exp_val>"
+            ]
+          },
+          "-unscale": {
+            "description": "Apply the scale/offset metadata for the bands to convert scaled values to unscaled values. It is also often necessary to reset the output datatype with the -ot switch.",
+            "type": ""
+          },
+          "-srcwin": {
+            "description": "Selects a subwindow from the source image for copying based on pixel/line location.",
+            "type": "",
+            "values": [
+              "<xoff>",
+              "<yoff>",
+              "<xsize>",
+              "<ysize>"
+            ]
+          },
+          "-projwin": {
+            "description": "Selects a subwindow from the source image for copying (like -srcwin) but with the corners given in georeferenced coordinates (by default expressed in the SRS of the dataset. Can be changed with -projwin_srs).",
+            "type": "",
+            "values": [
+              "<ulx>",
+              "<uly>",
+              "<lrx>",
+              "<lry>"
+            ]
+          },
+          "-projwin_srs": {
+            "description": "Specifies the SRS in which to interpret the coordinates given with -projwin. The <srs_def> may be any of the usual GDAL/OGR forms, complete WKT, PROJ.4, EPSG:n or a file containing the WKT.",
+            "type": "",
+            "values": [
+              "<srs_def>"
+            ]
+          },
+          "-epo": {
+            "description": "(Error when Partially Outside) If this option is set, -srcwin or -projwin values that falls partially outside the source raster extent will be considered as an error. The default behaviour is to accept such requests, when they were considered as an error before.",
+            "type": ""
+          },
+          "-eco": {
+            "description": "(Error when Completely Outside) Same as -epo, except that the criterion for erroring out is when the request falls completely outside the source raster extent.",
+            "type": ""
+          },
+          "-a_srs": {
+            "description": "Override the projection for the output file. The<srs_def> may be any of the usual GDAL/OGR forms, complete WKT, PROJ.4, EPSG:n or a file containing the WKT. No reprojection is done.",
+            "type": "",
+            "values": [
+              "<srs_def>"
+            ]
+          },
+          "-a_scale": {
+            "description": "Set band scaling value(no modification of pixel values is done)",
+            "type": "",
+            "values": [
+              "<value>"
+            ]
+          },
+          "-a_offset": {
+            "description": "Set band offset value (no modification of pixel values is done)",
+            "type": "",
+            "values": [
+              "<value>"
+            ]
+          },
+          "-a_ullr": {
+            "description": "Assign/override the georeferenced bounds of the output file. This assigns georeferenced bounds to the output file, ignoring what would have been derived from the source file. So this does not cause reprojection to the specified SRS.",
+            "type": "",
+            "values": [
+              "<ulx>",
+              "<uly>",
+              "<lrx>",
+              "<lry>"
+            ]
+          },
+          "-a_nodata": {
+            "description": "Assign a specified nodata value to output bands. It can be set to <i>none</i> to avoid setting a nodata value to the output file if one exists for the source file. Note that, if the input dataset has a nodata value, this does not cause pixel values that are equal to that nodata value to be changed to the value specified with this option.",
+            "type": "",
+            "values": [
+              "<value>"
+            ]
+          },
+          "-colorinterp_X": {
+            "description": "Override the color interpretation of band X (where X is a valid band number, starting at 1)",
+            "type": "",
+            "values": [
+              "red",
+              "green",
+              "blue",
+              "alpha",
+              "gray",
+              "undefined"
+            ]
+          },
+          "-colorinterp": {
+            "description": "Override the color interpretation of all specified bands. For example -colorinterp red,green,blue,alpha for a 4 band output dataset.",
+            "type": "",
+            "values": [
+              "red",
+              "green",
+              "blue",
+              "alpha",
+              "gray",
+              "undefined"
+            ]
+          },
+          "-mo": {
+            "description": "Passes a metadata key and value to set on the output dataset if possible.",
+            "type": "",
+            "values": [
+              "META-TAG=VALUE"
+            ]
+          },
+          "-co": {
+            "description": "Many formats have one or more optional creation options that can be used to control particulars about the file created. For instance, the GeoTIFF driver supports creation options to control compression, and whether the file should be tiled.\n\nThe creation options available vary by format driver, and some simple formats have no creation options at all. A list of options supported for a format can be listed with the –formats command line option but the documentation for the format is the definitive source of information on driver creation options. See Raster drivers format specific documentation for legal creation options for each format.",
+            "type": "",
+            "values": [
+              "<NAME=VALUE>"
+            ]
+          },
+          "-nogcp": {
+            "description": "Do not copy the GCPs in the source dataset to the output dataset.",
+            "type": ""
+          },
+          "-gcp": {
+            "description": "Add the indicated ground control point to the output dataset. This option may be provided multiple times to provide a set of GCPs.",
+            "type": "",
+            "values": [
+              "<pixel>",
+              "<line>",
+              "<easting>",
+              "<northing>",
+              "<elevation>"
+            ]
+          },
+          "-q": {
+            "description": "Suppress progress monitor and other non-error output.",
+            "type": ""
+          },
+          "-sds": {
+            "description": "Copy all subdatasets of this file to individual output files. Use with formats like HDF that have subdatasets.",
+            "type": ""
+          },
+          "-stats": {
+            "description": "Force (re)computation of statistics.",
+            "type": ""
+          },
+          "-norat": {
+            "description": "Do not copy source RAT into destination dataset.",
+            "type": ""
+          },
+          "-oo": {
+            "description": "Dataset open option (format specific)",
+            "type": ""
+          }
+        }
+      },
+      "gdalwarp": {
+        "description": "",
+        "args": {
+          "<src_dataset>": {
+            "description": "The source dataset name. It can be either file name, URL of data source or subdataset name for multi-dataset files.",
+            "type": ""
+          },
+          "<dst_dataset>": {
+            "description": "The destination file name.",
+            "type": ""
+          },
+          "-s_srs": {
+            "description": "Set source spatial reference.\n\nThe coordinate systems that can be passed are anything supported by the OGRSpatialReference.SetFromUserInput() call, which includes EPSG PCS and GCSes (i.e. EPSG:4296), PROJ.4 declarations (as above), or the name of a .prj file containing well known text. Starting with GDAL 2.2, if the SRS has an explicit vertical datum that points to a PROJ.4 geoidgrids, and the input dataset is a single band dataset, a vertical correction will be applied to the values of the dataset.",
+            "type": "",
+            "values": [
+              "<srs def>"
+            ]
+          },
+          "-t_srs": {
+            "description": "Set target spatial reference.\n\nThe coordinate systems that can be passed are anything supported by the OGRSpatialReference.SetFromUserInput() call, which includes EPSG PCS and GCSes (i.e. EPSG:4296), PROJ.4 declarations (as above), or the name of a .prj file containing well known text. Starting with GDAL 2.2, if the SRS has an explicit vertical datum that points to a PROJ.4 geoidgrids, and the input dataset is a single band dataset, a vertical correction will be applied to the values of the dataset.",
+            "type": "",
+            "values": [
+              "<srs def>"
+            ]
+          },
+          "-ct": {
+            "description": "A PROJ string (single step operation or multiple step string starting with +proj=pipeline), a WKT2 string describing a CoordinateOperation, or a urn:ogc:def:coordinateOperation:EPSG::XXXX URN overriding the default transformation from the source to the target CRS. It must take into account the axis order of the source and target CRS.",
+            "type": "",
+            "values": [
+              "<string>"
+            ]
+          },
+          "-to": {
+            "description": "Set a transformer option suitable to pass to GDALCreateGenImgProjTransformer2().",
+            "type": "",
+            "values": [
+              "<NAME=VALUE>"
+            ]
+          },
+          "-novshiftgrid": {
+            "description": "Disable the use of vertical datum shift grids when one of the source or target SRS has an explicit vertical datum, and the input dataset is a single band dataset.",
+            "type": ""
+          },
+          "-order": {
+            "description": "order of polynomial used for warping (1 to 3). The default is to select a polynomial order based on the number of GCPs.",
+            "type": "",
+            "values": [
+              "<n>"
+            ]
+          },
+          "-tps": {
+            "description": "Force use of thin plate spline transformer based on available GCPs.",
+            "type": ""
+          },
+          "-rpc": {
+            "description": "Force use of RPCs.",
+            "type": ""
+          },
+          "-geoloc": {
+            "description": "Force use of Geolocation Arrays.",
+            "type": ""
+          },
+          "-et": {
+            "description": "Error threshold for transformation approximation (in pixel units - defaults to 0.125, unless, starting with GDAL 2.1, the RPC_DEM warping option is specified, in which case, an exact transformer, i.e. err_threshold=0, will be used).",
+            "type": "",
+            "values": [
+              "<err_threshold>"
+            ]
+          },
+          "-refine_gcps": {
+            "description": "Refines the GCPs by automatically eliminating outliers. Outliers will be eliminated until minimum_gcps are left or when no outliers can be detected. The tolerance is passed to adjust when a GCP will be eliminated. Not that GCP refinement only works with polynomial interpolation. The tolerance is in pixel units if no projection is available, otherwise it is in SRS units. If minimum_gcps is not provided, the minimum GCPs according to the polynomial model is used.",
+            "type": "",
+            "values": [
+              "<tolerance minimum_gcps>"
+            ]
+          },
+          "-te": {
+            "description": "Set georeferenced extents of output file to be created (in target SRS by default, or in the SRS specified with -te_srs)",
+            "type": "",
+            "values": [
+              "<<xmin ymin xmax ymax>>"
+            ]
+          },
+          "-te_srs": {
+            "description": "Specifies the SRS in which to interpret the coordinates given with -te. The <srs_def> may be any of the usual GDAL/OGR forms, complete WKT, PROJ.4, EPSG:n or a file containing the WKT. This must not be confused with -t_srs which is the target SRS of the output dataset. -te_srs is a convenience e.g. when knowing the output coordinates in a geodetic long/lat SRS, but still wanting a result in a projected coordinate system.",
+            "type": "",
+            "values": [
+              "<srs_def>"
+            ]
+          },
+          "-tr": {
+            "description": "Sse output file resolution (in target georeferenced units)",
+            "type": "",
+            "values": [
+              "<xres> <yres>"
+            ]
+          },
+          "-tap": {
+            "description": "(target aligned pixels) align the coordinates of the extent of the output file to the values of the -tr, such that the aligned extent includes the minimum extent.",
+            "type": ""
+          },
+          "-ts": {
+            "description": "Set output file size in pixels and lines. If width or height is set to 0, the other dimension will be guessed from the computed resolution. Note that -ts cannot be used with -tr",
+            "type": "",
+            "values": [
+              "<width> <height>"
+            ]
+          },
+          "-ovr": {
+            "description": "To specify which overview level of source files must be used. The default choice, AUTO, will select the overview level whose resolution is the closest to the target resolution. Specify an integer value (0-based, i.e. 0=1st overview level) to select a particular level. Specify AUTO-n where n is an integer greater or equal to 1, to select an overview level below the AUTO one. Or specify NONE to force the base resolution to be used (can be useful if overviews have been generated with a low quality resampling method, and the warping is done using a higher quality resampling method).",
+            "type": "",
+            "values": [
+              "level",
+              "AUTO",
+              "AUTO-n",
+              "NONE"
+            ]
+          },
+          "-wo": {
+            "description": "Set a warp option. The GDALWarpOptions::papszWarpOptions docs show all options. Multiple -wo options may be listed.",
+            "type": "",
+            "values": [
+              "\"NAME=VALUE\""
+            ]
+          },
+          "-ot": {
+            "description": "Force the output image bands to have a specific type. Use type names (i.e. Byte, Int16,…)",
+            "type": "",
+            "values": [
+              "Byte",
+              "Int16",
+              "UInt16",
+              "UInt32",
+              "Int32",
+              "Float32",
+              "Float64",
+              "CInt16",
+              "CInt32",
+              "CFloat32",
+              "CFloat64"
+            ]
+          },
+          "-wt": {
+            "description": "Working pixel data type. The data type of pixels in the source image and destination image buffers.",
+            "type": "",
+            "values": [
+              "<type>"
+            ]
+          },
+          "-r": {
+            "description": "Resampling method to use. Available methods are:\n\nnear: nearest neighbour resampling (default, fastest algorithm, worst interpolation quality).\n\nbilinear: bilinear resampling.\n\ncubic: cubic resampling.\n\ncubicspline: cubic spline resampling.\n\nlanczos: Lanczos windowed sinc resampling.\n\naverage: average resampling, computes the average of all non-NODATA contributing pixels.\n\nmode: mode resampling, selects the value which appears most often of all the sampled points.\n\nmax: maximum resampling, selects the maximum value from all non-NODATA contributing pixels.\n\nmin: minimum resampling, selects the minimum value from all non-NODATA contributing pixels.\n\nmed: median resampling, selects the median value of all non-NODATA contributing pixels.\n\nq1: first quartile resampling, selects the first quartile value of all non-NODATA contributing pixels.\n\nq3: third quartile resampling, selects the third quartile value of all non-NODATA contributing pixels.",
+            "type": "",
+            "values": [
+              "nearest",
+              "bilinear",
+              "cubic",
+              "cubicspline",
+              "lanczos",
+              "average",
+              "mode",
+              "max",
+              "min",
+              "med",
+              "q1",
+              "q2"
+            ]
+          },
+          "-srcnodata": {
+            "description": "Set nodata masking values for input bands (different values can be supplied for each band). If more than one value is supplied all values should be quoted to keep them together as a single operating system argument. Masked values will not be used in interpolation. Use a value of None to ignore intrinsic nodata settings on the source dataset.",
+            "type": "",
+            "values": [
+              "<value [value...]>"
+            ]
+          },
+          "-dstnodata": {
+            "description": "Set nodata values for output bands (different values can be supplied for each band). If more than one value is supplied all values should be quoted to keep them together as a single operating system argument. New files will be initialized to this value and if possible the nodata value will be recorded in the output file. Use a value of None to ensure that nodata is not defined. If this argument is not used then nodata values will be copied from the source dataset.",
+            "type": "",
+            "values": [
+              "<value [value...]>"
+            ]
+          },
+          "-srcalpha": {
+            "description": "Force the last band of a source image to be considered as a source alpha band.",
+            "type": ""
+          },
+          "-nosrcalpha": {
+            "description": "Prevent the alpha band of a source image to be considered as such (it will be warped as a regular band)",
+            "type": ""
+          },
+          "-dstalpha": {
+            "description": "Create an output alpha band to identify nodata (unset/transparent) pixels.",
+            "type": ""
+          },
+          "-wm": {
+            "description": "Set the amount of memory that the warp API is allowed to use for caching. The value is interpreted as being in megabytes if the value is less than 10000. For values >=10000, this is interpreted as bytes.",
+            "type": "",
+            "values": [
+              "<memory_in_mb>"
+            ]
+          },
+          "-multi": {
+            "description": "Use multithreaded warping implementation. Two threads will be used to process chunks of image and perform input/output operation simultaneously. Note that computation is not multithreaded itself. To do that, you can use the -wo NUM_THREADS=val/ALL_CPUS option, which can be combined with -multi",
+            "type": ""
+          },
+          "-q": {
+            "description": "Be quiet.",
+            "type": ""
+          },
+          "-of": {
+            "description": "Select the output format. Starting with GDAL 2.3, if not specified, the format is guessed from the extension (previously was GTiff). Use the short format name.",
+            "type": "",
+            "values": [
+              "<format>"
+            ]
+          },
+          "-co": {
+            "description": "Many formats have one or more optional creation options that can be used to control particulars about the file created. For instance, the GeoTIFF driver supports creation options to control compression, and whether the file should be tiled.\n\nThe creation options available vary by format driver, and some simple formats have no creation options at all. A list of options supported for a format can be listed with the –formats command line option but the documentation for the format is the definitive source of information on driver creation options. See Raster drivers format specific documentation for legal creation options for each format.",
+            "type": "",
+            "values": [
+              "<NAME=VALUE>"
+            ]
+          },
+          "-cutline": {
+            "description": "Enable use of a blend cutline from the name OGR support datasource.",
+            "type": "",
+            "values": [
+              "<datasource>"
+            ]
+          },
+          "-cl": {
+            "description": "Select the named layer from the cutline datasource.",
+            "type": "",
+            "values": [
+              "<layername>"
+            ]
+          },
+          "-cwhere": {
+            "description": "Restrict desired cutline features based on attribute query.",
+            "type": "",
+            "values": [
+              "<expression>"
+            ]
+          },
+          "-csql": {
+            "description": "Select cutline features using an SQL query instead of from a layer with -cl.",
+            "type": "",
+            "values": [
+              "<query>"
+            ]
+          },
+          "-cblend": {
+            "description": "Set a blend distance to use to blend over cutlines (in pixels).",
+            "type": "",
+            "values": [
+              "<distance>"
+            ]
+          },
+          "-crop_to_cutline": {
+            "description": "Crop the extent of the target dataset to the extent of the cutline..",
+            "type": ""
+          },
+          "-overwrite": {
+            "description": "Overwrite the target dataset if it already exists.",
+            "type": ""
+          },
+          "-nomd": {
+            "description": "Do not copy metadata. Without this option, dataset and band metadata (as well as some band information) will be copied from the first source dataset. Items that differ between source datasets will be set to * (see -cvmd option).",
+            "type": ""
+          },
+          "-cvmd": {
+            "description": "Value to set metadata items that conflict between source datasets (default is “*”). Use “” to remove conflicting items.",
+            "type": "",
+            "values": [
+              "<meta_conflict_value>"
+            ]
+          },
+          "-setci": {
+            "description": "Set the color interpretation of the bands of the target dataset from the source dataset.",
+            "type": ""
+          },
+          "-oo": {
+            "description": "Dataset open option (format specific)",
+            "type": "",
+            "values": [
+              "<NAME=VALUE>"
+            ]
+          },
+          "-doo": {
+            "description": "Output dataset open option (format specific)",
+            "type": "",
+            "values": [
+              "<NAME=VALUE>"
+            ]
+          }
+        }
+      }
+    }
   }
 }
