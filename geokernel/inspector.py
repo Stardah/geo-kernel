@@ -1,3 +1,7 @@
+import re
+import sys
+
+
 class Inspector:
     REG_EX_GDAL = '(gdal)\w+.*'
     # To show constant values of argument (1: obj) (2: command) (3: all args)...

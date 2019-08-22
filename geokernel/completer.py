@@ -1,5 +1,6 @@
 import json
 import re
+import sys
 
 
 class Completer:
@@ -17,9 +18,8 @@ class Completer:
         'cursor_end': 0,
         'matches': []}
 
-    def __init__(self, *args, **kwargs):
-        f = open("cmd.json", 'r').read()
-        self.commands = json.loads(f)
+    def __init__(self, commands):
+        self.commands = commands
 
     def message(self, matches):
         if self.code[self.cursor_pos - 1] != " ":
@@ -92,12 +92,12 @@ class Completer:
             if command in self.commands[obj]['commands']:
                 command = self.commands[obj]['commands'][command]
                 if 'args' in command:
-                    return self.message(command['args'])
+                    return self.message(list(command['args'].keys()))
                 return self.COMPLETE_ERROR
             else:
                 # Given command does not exist, user probably made a mistake,
                 # we return list of commands for a given object
-                return self.message(self.commands[obj]['commands'].keys())
+                return self.message(list(self.commands[obj]['commands'].keys()))
         else:
             # Given object doen not exist
             return self.COMPLETE_ERROR
@@ -106,7 +106,7 @@ class Completer:
         # So the first group is an object
         obj = match.group(1)
         try:
-            commands = self.commands[obj]['commands']
+            commands = list(self.commands[obj]['commands'].keys())
             return self.message(commands)
         except:
             # Given object doen not exist

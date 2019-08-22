@@ -5,7 +5,6 @@ import json
 
 from .inspector import Inspector
 from .completer import Completer
-from .commands import Commands
 from .client import Client, do_log
 
 
@@ -32,7 +31,7 @@ class GeoKernel(Kernel):
             self.ip = f.readline().split('=')[1].strip()
 
         self.client = Client(self.port, self.ip)
-        f = open("cmd.json", 'r').read()
+        f = open("cmd.json", 'r', encoding='UTF-8').read()
         commands = json.loads(f)
         self.completer = Completer(commands)
         self.inspector = Inspector(commands)
@@ -71,7 +70,7 @@ class GeoKernel(Kernel):
                     else:
                         self.send_html(row['data'])
             except Exception as e:
-                do_log(e)
+                do_log(str(e))
             # Send data to be displayed in a cell
         # Return the execution results
         return {'status': 'ok',

@@ -1,4 +1,4 @@
-from websocket import create_connection
+from websocket import create_connection, WebSocketConnectionClosedException
 import os
 import webbrowser
 import json
@@ -56,7 +56,7 @@ class Client:
             try:
                 os.makedirs(os.path.dirname(filename))
             except OSError as exc:
-                do_log(exc.strerror)
+                #do_log(exc.strerror)
                 return 1
 
         with open(filename, 'w') as f:
@@ -69,7 +69,7 @@ class Client:
         """
         # request token
         self.token = self.request_ws("token", "token")
-        if self.token is not Exception:
+        if self.token is not WebSocketConnectionClosedException:
             return LOGIN_BEGIN+self.url+LOGIN_NEXT+self.token+LOGIN_END
         else:
             self.token = str(self.token)
