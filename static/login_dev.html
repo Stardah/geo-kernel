@@ -1,0 +1,63 @@
+<html>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jsSHA/2.0.2/sha.js'></script>
+<style>
+    /* Full-width inputs */
+    input[type=text],
+    input[type=password] {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+    }
+    /* Set a style for all buttons */
+    button {
+        background-color: #4e91fc;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+    }
+    /* Add a hover effect for buttons */
+    button:hover {
+        opacity: 0.8;
+    }
+</style>
+<div class='container'>
+    <!-- <label for='url'><b>URL</b></label> -->
+    <!-- <input type='text' id='urlInput' placeholder='Server URL' name='url' required> -->
+    <label for='uname'><b>Username</b></label>
+    <input type='text' id='loginInput' placeholder='Enter Username' name='uname' required>
+    <label for='psw'><b>Password</b></label>
+    <input type='password' id='passwordInput' placeholder='Enter Password' name='psw' required> </div>
+<button class='check'>Login</button>
+<div class='state'> Result: <span class='value'>?</span> </div>
+<script type='text/javascript'>
+    let url = 'wss://127.0.0.1:9090/';
+    let check = document.querySelector('.check'),
+        value = document.querySelector('.value');
+    let websocket;
+    websocket = new WebSocket(url);   
+    check.onclick = function(event) {
+ 
+        websocket.onmessage = function(event) {
+            value.textContent = event.data;
+        };
+        let login = document.getElementById('loginInput').value;
+        let password = document.getElementById('passwordInput').value;
+        // let hashObj = new jsSHA('SHA-512', 'TEXT', {numRounds: 1});
+        // hashObj.update(password);
+        // let hash = hashObj.getHash('HEX');
+        document.getElementById('passwordInput').value ='';
+
+        let token_ = '';
+        // var data_ = 'login ' + login + ' ' + hash;
+        let data_ = 'login ' + login + ' ' + password;
+        websocket.send(JSON.stringify({type: 'authenticate', token: token_, data: data_}));
+    };
+</script>
+
+</html>
