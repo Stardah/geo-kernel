@@ -1,4 +1,5 @@
 import re
+import os
 
 from ipykernel.kernelbase import Kernel
 import json
@@ -22,7 +23,7 @@ class GeoKernel(Kernel):
 
     def __init__(self, **kwargs):
         self.ip = '127.0.0.1'
-        self.port = '8080'
+        self.port = '9090'
         from jupyter_client.kernelspec import KernelSpecManager
         destination = KernelSpecManager()._get_destination_dir('geo', user=True, prefix=None)
         with open(destination+'\config.txt', 'r') as f:
