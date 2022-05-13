@@ -23,13 +23,17 @@ class GeoKernel(Kernel):
 
     def __init__(self, **kwargs):
         self.ip = '127.0.0.1'
+        # self.ip = 'webdb.gis.land/gis'
         self.port = '9090'
         from jupyter_client.kernelspec import KernelSpecManager
         destination = KernelSpecManager()._get_destination_dir('geo', user=True, prefix=None)
-        with open(destination+'\config.txt', 'r') as f:
-            do_log(destination+'\config.txt')
-            self.port = f.readline().split('=')[1].strip()
-            self.ip = f.readline().split('=')[1].strip()
+        try:
+            with open(destination+'\config.txt', 'r') as f:
+                do_log(destination+'\config.txt')
+                self.port = f.readline().split('=')[1].strip()
+                self.ip = f.readline().split('=')[1].strip()
+        except Exception as e:
+            print("Unable to read config.txt: ", e)
 
         self.client = Client(self.port, self.ip)
         f = open("cmd.json", 'r', encoding='UTF-8').read()
