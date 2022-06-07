@@ -12,9 +12,9 @@ from .client import Client, do_log
 class GeoKernel(Kernel):
     # Kernel info
     implementation = 'GEO'
-    implementation_version = '0.1'
+    implementation_version = '0.2'
     language = 'geo'
-    language_version = '1.0'
+    language_version = '1.1'
     language_info = {'name': 'geo',
                      'mimetype': 'text/x-geo',  # mimetype for script files in this language
                      'codemirror_mode': 'geo',
@@ -28,7 +28,7 @@ class GeoKernel(Kernel):
         from jupyter_client.kernelspec import KernelSpecManager
         destination = KernelSpecManager()._get_destination_dir('geo', user=True, prefix=None)
         try:
-            with open(destination+'\config.txt', 'r') as f:
+            with open(os.path.join(destination, 'config.txt'), 'r') as f:
                 do_log(destination+'\config.txt')
                 self.port = f.readline().split('=')[1].strip()
                 self.ip = f.readline().split('=')[1].strip()
@@ -36,7 +36,7 @@ class GeoKernel(Kernel):
             print("Unable to read config.txt: ", e)
 
         self.client = Client(self.port, self.ip)
-        f = open("cmd.json", 'r', encoding='UTF-8').read()
+        f = open(os.path.join(destination, 'cmd.json'), 'r', encoding='UTF-8').read()
         commands = json.loads(f)
         self.completer = Completer(commands)
         self.inspector = Inspector(commands)
@@ -45,7 +45,7 @@ class GeoKernel(Kernel):
     def do_complete(self, code, cursor_pos):
         return self.completer.complete(code, cursor_pos)
 
-    def do_inspect(self, code, cursor_pos, detail_level=0):
+    def do_inspect(self, code, cursor_pos, detail_level=0, omit_sections=()):
         return self.inspector.inspect(code, cursor_pos)
 
     def send_html(self, data):

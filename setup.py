@@ -18,4 +18,7 @@ setuptools.setup(
     classifiers=[
         'Programming Language :: Python :: 3',
     ],
+    # data_files=[('geokernel', ['cmd.json']), ('.', 'config.txt')],
+    package_data={'geokernel': ['cmd.json']},
+    include_package_data=True
 )

@@ -2,6 +2,37 @@
   "user": {
     "login": []
   },
+  "webgis": {
+    "description": "Send commands to the WebGIS",
+    "commands": {
+      "algebra": {
+        "description": "Sends map algebra formula to the connected WebGIS client",
+        "args": {
+          "-layerId": {
+              "description": "An id of the layer (can be seen in the layer settings)",
+              "type": "int"
+          },
+          "-v": {
+              "description": "map algebra formula",
+              "type": "string"
+          }
+        }
+      },
+      "convolution": {
+        "description": "Sends convolution kernel to the connected WebGIS client",
+        "args": {
+          "-layerId": {
+              "description": "An id of the layer (can be seen in the layer settings)",
+              "type": "int"
+          },
+          "-v": {
+              "description": "convolution kernel",
+              "type": "string"
+          }
+        }
+      }
+    }
+  },
   "map": {
     "description": "An object which represents a map",
     "commands": {
